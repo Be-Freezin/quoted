@@ -4,9 +4,11 @@ import Image from 'next/image'
 import Nav from './components/Nav'
 import Feed from './components/Feed'
 import Header from './components/Header'
-import Login from './components/Login'
+import AuthModal from './components/AuthModal'
+import Link from 'next/link'
 export default function Home() {
 	const [toggleLogin, setToggleLogin] = useState(false)
+
 	// Array of objects for our posts
 	const [post, setPost] = useState([
 		{
@@ -26,7 +28,7 @@ export default function Home() {
 	return (
 		<main className='min-h-screen bg-stone-600'>
 			<Nav
-				login={<Login />}
+				authModal={<AuthModal />}
 				toggleLogin={toggleLogin}
 				setToggleLogin={setToggleLogin}
 			/>
