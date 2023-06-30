@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useState } from 'react'
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth'
 import { auth } from '../config/firebase'
 
 const AuthModal = () => {
@@ -7,6 +9,8 @@ const AuthModal = () => {
 	const [password, setPassword] = useState('')
 	const [name, setName] = useState('')
 	const [profilePicture, setProfilePicture] = useState(null)
+
+	console.log(auth?.currentUser?.email)
 
 	const handleLogin = async (e) => {
 		e.preventDefault()
@@ -16,6 +20,15 @@ const AuthModal = () => {
 			console.error(err)
 		}
 	}
+
+		const logOut = async () => {
+			
+			try {
+				await signOut(auth)
+			} catch (err) {
+				console.error(err)
+			}
+		}
 
 	const handleSignUp = async (e) => {
 		e.preventDefault()
@@ -28,6 +41,7 @@ const AuthModal = () => {
 			// Handle sign-up error
 		}
 	}
+	
 
 	return (
 		<div className=' text-center'>
@@ -52,23 +66,22 @@ const AuthModal = () => {
 					className='border-2 border-stone-700'
 					onChange={(e) => setPassword(e.target.value)}
 				/>
-				<button type='submit'>Submit</button>
+				<div className='w-full flex-col justify-between'>
+					<button
+						type='submit'
+						onClick={handleSignUp}
+						className='bg-stone-400 w-fit px-2 py-2 rounded-xl'
+					>
+						Sign In
+					</button>
+					<button
+						onClick={logOut}
+						className='bg-stone-400 w-fit px-2 py-2 rounded-xl'
+					>
+						Sign Out
+					</button>
+				</div>
 			</form>
-			<p>or login</p>
-			<input
-				type='text'
-				placeholder='email'
-				value={email}
-				className='border-2 border-stone-700'
-				onChange={(e) => setEmail(e.target.value)}
-			/>
-			<input
-				type='password'
-				placeholder='password'
-				value={password}
-				className='border-2 border-stone-700'
-				onChange={(e) => setPassword(e.target.value)}
-			/>
 		</div>
 	)
 }

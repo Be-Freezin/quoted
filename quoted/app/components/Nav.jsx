@@ -11,13 +11,13 @@ const Nav = ({ authModal, toggleLogin, setToggleLogin }) => {
 		<div className='w-full flex items-center justify-between border-b-2 border-b-amber-200'>
 			<a className='m-4 lg:mx-16 text-stone-50'>QUOTED</a>
 			{/* Make a tag a link so it directs back to home or top of page */}
-			<Link href="/auth"
+			<button 
 				onClick={() => setToggleLogin(true)}
 				className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-amber-200 bg-stone-400 hover:bg-stone-300'
 			>
 				Log in/Sign up
-			</Link>
-			{/* {toggleLogin && (
+			</button>
+			{toggleLogin && (
 				<div className='fixed top-0   h-screen w-screen flex items-center justify-center border-b-2  bg-opacity-70 backdrop-filter backdrop-blur-sm  py-2 text-lg'>
 					<div className='flex flex-col  justify-center p-16 items-center  mx-0 my-0 bg-stone-300'>
 						<button
@@ -29,7 +29,7 @@ const Nav = ({ authModal, toggleLogin, setToggleLogin }) => {
 						{authModal}
 					</div>
 				</div>
-			)} */}
+			)}
 		</div>
 	)
 }
