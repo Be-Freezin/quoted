@@ -1,11 +1,13 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Image from 'next/image'
 import Nav from './components/Nav'
 import Feed from './components/Feed'
 import Header from './components/Header'
 import SignIn from './components/SignIn'
 import Link from 'next/link'
+
+
 export default function Home() {
 	const [toggleLogin, setToggleLogin] = useState(false)
 

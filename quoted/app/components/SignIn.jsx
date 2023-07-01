@@ -1,14 +1,15 @@
 'use client'
 
-import React, { useState } from 'react'
-import signIn from '../firebase/auth/signin'
-import { signOut } from 'firebase/auth'
+import React, { useState, useContext } from 'react'
+import { signIn, signUp } from '../firebase/auth/auth'
+// import { signOut } from 'firebase/auth'
+// import { AuthContext } from '../context/AuthContext'
 import Link from 'next/link'
-// import { auth } from '../firebase/config'
-// import firebase_app from '../firebase/config'
+
 
 
 const SignIn = () => {
+	// const { handleSignIn } = useContext(AuthContext)
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 
@@ -26,6 +27,7 @@ const SignIn = () => {
 			return console.log(error)
 		}
 		console.log(result)
+		signIn()
 	}
 
 

@@ -1,34 +1,65 @@
-import React, { useState, useContext, useEffect, createContext} from 'react'
-import { onAuthStateChanged, getAuth } from 'firebase/auth'
-import firebase_app from '../firebase/config'
+import React, { useState, useContext, useEffect, createContext } from 'react'
+// import { onAuthStateChanged, getAuth } from 'firebase/auth'
+import { collection, getDocs, setDocs, doc } from 'firebase/firestore'
+// import { signInWithEmailAndPassword } from 'firebase/auth'
 
-const auth = getAuth(firebase_app)
+import { db, auth } from '../firebase/config'
 
-export const AuthContext = createContext({})
+const AuthContext = createContext({})
 
-export const useAuthContext = () => useContext(AuthContext)
+// export const useAuthContext = () => useContext(AuthContext)
 
-
-export const AuthContextProvider = ({ children }) => {
-	const [user, setUser] = useState(null)
-	const [loading, setLoading] = useState(true)
+const AuthContextProvider = ({ children }) => {
+	const [users, setUsers] = useState([])
+	const [posts, setPosts] = useState([])
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			if (user) {
-				setUser(user)
-			} else {
-				setUser(null)
-			}
-			setLoading(false)
-		})
+		const getUsers = async () => {
+			const querySnapshot = await getDocs(collection(db, 'users'))
 
-		return () => unsubscribe()
+			setUsers(
+				querySnapshot.docs.map((doc) => {
+					return {
+						id: doc.id,
+						data: {
+							...doc.data(),
+						},
+					}
+				})
+			)
+		}
+		getUsers()
 	}, [])
 
+	useEffect(() => {
+		const getPosts = async () => {
+			const querySnapshot = await getDocs(collection(db, 'articles'))
+
+			setPosts(
+				querySnapshot.docs.map((doc) => {
+					return {
+						id: doc.id,
+						data: {
+							body: doc.data().body,
+							title: doc.data().title,
+							author: doc.data().author,
+							postDate: doc.data().postDate,
+						},
+					}
+				})
+			)
+		}
+
+		getPosts()
+	}, [])
+
+	// const handleSignIn = async (email, password) => {
+	// 	await signInWithEmailAndPassword(auth, email, password)
+	// }
 	return (
-		<AuthContext.Provider value={{ user }}>
-			{loading ? <div>Loading...</div> : children}
+		<AuthContext.Provider value={{ posts, users }}>
+			{children}
 		</AuthContext.Provider>
 	)
 }
+export { AuthContext, AuthContextProvider }
