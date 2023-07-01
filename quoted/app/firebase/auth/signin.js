@@ -4,10 +4,12 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
 const auth = getAuth(firebase_app)
 const signIn = async (email, password) => {
-	e.preventDefault()
+	let result = null,
+		error = null
 	try {
-		await signInWithEmailAndPassword(auth, email, password)
+		result = await signInWithEmailAndPassword(auth, email, password)
 	} catch (err) {
+		error = err
 		console.error(err)
 	}
 	return { result, error }

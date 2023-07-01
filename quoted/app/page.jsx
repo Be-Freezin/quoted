@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Nav from './components/Nav'
 import Feed from './components/Feed'
 import Header from './components/Header'
-import AuthModal from './components/AuthModal'
+import SignIn from './components/SignIn'
 import Link from 'next/link'
 export default function Home() {
 	const [toggleLogin, setToggleLogin] = useState(false)
@@ -26,9 +26,9 @@ export default function Home() {
 		date: '',
 	})
 	return (
-		<main className='min-h-screen bg-stone-600'>
+		<main className='min-h-screen bg-white-primary-100'>
 			<Nav
-				authModal={<AuthModal />}
+				signIn={<SignIn />}
 				toggleLogin={toggleLogin}
 				setToggleLogin={setToggleLogin}
 			/>
