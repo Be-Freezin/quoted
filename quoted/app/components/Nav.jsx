@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import signout from '../firebase/auth/signout'
-// import AuthModal from './AuthModal'
+import React, { useContext, useState } from 'react'
+import { logOut } from '../firebase/auth/auth'
+import { AuthContext } from '../context/AuthContext'
 import Link from 'next/link'
 
 const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
+	
 	return (
 		<div className='w-full flex items-center justify-between  border-b-2 border-black-primary-100'>
 			<a className='m-4 lg:mx-16 text-black-primary-100'>QUOTED</a>
@@ -16,7 +17,7 @@ const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
 					Log in/Sign up
 				</button>
 				<button
-					onClick={signout}
+					onClick={logOut}
 					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
 				>
 					Log Out
