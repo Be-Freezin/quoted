@@ -1,11 +1,14 @@
 import firebase_app from '../config'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../firebase/config'
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+
+
+const auth = getAuth(firebase_app)
 
 const signUp = async (email, password) => {
-	e.preventDefault()
+	let result = null,
+		error = null
 	try {
-		await createUserWithEmailAndPassword(auth, signUpEmail, signUpPassword)
+		await createUserWithEmailAndPassword(auth, email, password)
 	} catch (error) {
 		console.error(error)
 	}

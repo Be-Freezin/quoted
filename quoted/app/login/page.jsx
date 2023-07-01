@@ -1,10 +1,10 @@
 import React from 'react'
-import AuthModal from '../components/AuthModal'
+import Signin from '../components/SignIn'
 
 const Login = () => {
-  return (
-		<div className='bg-stone-600 min-h-screen'>
-			<AuthModal />
+	return (
+		<div className=' min-h-screen'>
+			<Signin />
 		</div>
 	)
 }
