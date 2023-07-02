@@ -8,8 +8,12 @@ const ProtectedRoute = ({ children }) => {
 
 	if (!user) {
 		return router.push('/')
+		
 	}
 	return children
 }
 
 export default ProtectedRoute
+
+
+// FIX THE DUAL RENDERING OF THE PROFILE COMPONENT!

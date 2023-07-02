@@ -6,6 +6,7 @@ import Link from 'next/link'
 
 const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
 	const { user, logout } = UserAuth()
+	const router = useRouter()
 
 	const handleLogout = async () => {
 		try {

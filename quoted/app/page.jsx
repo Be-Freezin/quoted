@@ -21,12 +21,12 @@ export default function Home() {
 		},
 	])
 	// state for our inputs to catch the new post and we will push it into our array of posts
-	const [newPost, setNewPost] = useState({
-		title: '',
-		post: '',
-		author: '',
-		date: '',
-	})
+	// const [newPost, setNewPost] = useState({
+	// 	title: '',
+	// 	post: '',
+	// 	author: '',
+	// 	date: '',
+	// })
 	return (
 		<main className='min-h-screen bg-white-primary-100'>
 			<Nav
