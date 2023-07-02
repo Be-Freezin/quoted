@@ -1,10 +1,21 @@
 import React, { useContext, useState } from 'react'
-import { logOut } from '../firebase/auth/auth'
-import { AuthContext } from '../context/AuthContext'
+import { UserAuth } from '../context/AuthContext'
+import { useRouter } from 'next/navigation'
+
 import Link from 'next/link'
 
 const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
-	
+	const { user, logout } = UserAuth()
+
+	const handleLogout = async () => {
+		try {
+			await logout()
+			router.push('/')
+			console.log('logged out')
+		} catch (e) {
+			console.log(e.message)
+		}
+	}
 	return (
 		<div className='w-full flex items-center justify-between  border-b-2 border-black-primary-100'>
 			<a className='m-4 lg:mx-16 text-black-primary-100'>QUOTED</a>
@@ -17,7 +28,7 @@ const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
 					Log in/Sign up
 				</button>
 				<button
-					onClick={logOut}
+					onClick={handleLogout}
 					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
 				>
 					Log Out
