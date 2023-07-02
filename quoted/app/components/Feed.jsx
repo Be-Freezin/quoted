@@ -10,7 +10,7 @@ const Feed = ({post}) => {
 	// 	user === null? (<div></div>): ('')
 	// }
 
-	const { posts } = useContext(AuthContext)
+	// const { posts } = useContext(AuthContext)
 	// console.log(posts)
 
 	return (
@@ -19,9 +19,9 @@ const Feed = ({post}) => {
 				Create Post
 			</button>
 			{/* Button will pop up a window that contains a form for the user to create the post. */}
-			{posts.map(post => (
+			{/* {posts.map(post => (
 				<PostCard post={post} key={post.id} />
-			))}
+			))} */}
 			{/* <article className='p-4 w-11/12 lg:w-1/3 text-stone-50 border-b-2'>
 				<span className='text-xl'>Post title</span>
 				<p className='my-4'>

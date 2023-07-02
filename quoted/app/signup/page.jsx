@@ -2,24 +2,30 @@
 import React, { useState } from 'react'
 import signUp from '../firebase/auth/signup'
 import { useRouter } from 'next/navigation'
+import { UserAuth } from '../context/AuthContext'
 
 const page = () => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [error, setError] = useState('')
 	const router = useRouter()
 
-	const handleForm = async (e) => {
+	const { createUser } = UserAuth()
+
+	const handleSubmit = async (e) => {
 		e.preventDefault()
-		const { result, err } = await signUp(email, password)
-		if (err) {
-			return console.log(err)
+		setError('')
+		try {
+			await createUser(email, password)
+		} catch (e) {
+			setError(e.message)
+			console.log(e.message)
 		}
-		console.log(result)
-		return router.push('/')
+		return router.push('/profile')
 	}
 	return (
 		<div className='flex flex-col min-h-screen justify-center p-16 items-center text-center mx-0 my-0 bg-black-primary-80 '>
-			<form onSubmit={handleForm} className='flex flex-col'>
+			<form onSubmit={handleSubmit} className='flex flex-col'>
 				<input
 					type='text'
 					placeholder='Name'
@@ -30,14 +36,14 @@ const page = () => {
 					placeholder='Email'
 					value={email}
 					className='border-2 border-stone-700 p-1 rounded-lg'
-					onChange={(e) => email(e.target.value)}
+					onChange={(e) => setEmail(e.target.value)}
 				/>
 				<input
 					type='password'
 					placeholder='Password'
 					value={password}
 					className='border-2 border-stone-700 p-1 rounded-lg'
-					onChange={(e) => password(e.target.value)}
+					onChange={(e) => setPassword(e.target.value)}
 				/>
 				<div className='w-full flex-col justify-between'>
 					<button

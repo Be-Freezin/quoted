@@ -2,39 +2,44 @@
 
 import React, { useState, useContext } from 'react'
 import { signIn, signUp } from '../firebase/auth/auth'
+import { useRouter } from 'next/navigation'
 // import { signOut } from 'firebase/auth'
 // import { AuthContext } from '../context/AuthContext'
 import Link from 'next/link'
+import { UserAuth } from '../context/AuthContext'
 
 
 
 const SignIn = () => {
-	// const { handleSignIn } = useContext(AuthContext)
+	const { signIn } = UserAuth()
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [error, setError] = useState('')
+	const router = useRouter()
 
 	// const [logInEmail, setLogInEmail] = useState('')
 	// const [logInPassword, setLogInPassword] = useState('')
 
-	
-
-	const handleForm = async (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault()
+		setError('')
 
-		const { result, error } = await signIn(email, password)
-
-		if (error) {
-			return console.log(error)
+		try {
+			await signIn(email, password)
+			router.push('/profile')
+		} catch (e) {
+			setError(e.message)
+			console.log(e.message)
 		}
-		console.log(result)
-		signIn()
 	}
+
+
 
 
 	return (
 		<div className=' text-center '>
 		
-			<form onSubmit={handleForm} className='flex flex-col'>
+			<form onSubmit={handleSubmit} className='flex flex-col'>
 				<input
 					type='text'
 					placeholder='Email'
@@ -59,7 +64,7 @@ const SignIn = () => {
 				</button>
 			</form>
 			<p className='text-white-primary-100'>
-				Don't have an account? <Link href='/signup'>Sign up!</Link>
+				Don't have an account? <Link href='/signup' className='underline text-yellow-primary-100'>Sign up!</Link>
 			</p>
 		</div>
 	)
