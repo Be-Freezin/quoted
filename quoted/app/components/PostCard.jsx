@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { db } from '../firebase/config'
-import { doc, getDoc } from 'firebase/firestore'
+import { UserAuth } from '../context/AuthContext'
+// import { db } from '../firebase/config'
+// import { doc, getDoc } from 'firebase/firestore'
 
 const PostCard = ({ post, id }) => {
 	const [authorData, setAuthorData] = useState(null)
+	const { user, users, posts } = UserAuth()
 
 	// useEffect(() => {
 	// 	const getAuthorData = async (data) => {
@@ -19,11 +21,11 @@ const PostCard = ({ post, id }) => {
 			key={id}
 			className='p-4 w-11/12 lg:w-1/3 text-black-primary-100 border-b-2 border-black-primary-100'
 		>
-			<span className='text-xl'>{post.data.title}</span>
-			<p className='my-4'>{post.data.body}</p>
+			<span className='text-xl'>{post.title}</span>
+			<p className='my-4'>{post.body}</p>
 			<div className='flex w-1/4 justify-between text-sm font-light'>
-				<span>{post.data.author}</span>
-				{new Date(post.data.postDate).toLocaleString('en-US', {
+				<span>{post.author}</span>
+				{new Date(post.postDate).toLocaleString('en-US', {
 					day: 'numeric',
 					month: 'short',
 				})}
