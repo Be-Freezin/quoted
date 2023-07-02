@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { UserAuth } from '../context/AuthContext'
-// import { db } from '../firebase/config'
-// import { doc, getDoc } from 'firebase/firestore'
+
 
 const PostCard = ({ post, id }) => {
 	const [authorData, setAuthorData] = useState(null)
-	const { user, users, posts } = UserAuth()
+	const { user, users, posts, deleteItem } = UserAuth()
 
 	// useEffect(() => {
 	// 	const getAuthorData = async (data) => {
 	// 		setAuthorData(
-  //       await getDoc(doc(db, 'users', post.data.author)).data()
-  //       )
+	//       await getDoc(doc(db, 'users', post.data.author)).data()
+	//       )
 	// 	}
 
 	// 	getAuthorData()
@@ -29,7 +28,7 @@ const PostCard = ({ post, id }) => {
 					day: 'numeric',
 					month: 'short',
 				})}
-				{/* <span> {post.data.postDate} </span> */}
+				<button onClick={() => deleteItem(post.id)}>X</button>
 			</div>
 		</article>
 	)
