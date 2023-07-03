@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { UserAuth } from '../context/AuthContext'
 import { useRouter } from 'next/navigation'
 
+
 import Link from 'next/link'
 
 const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
@@ -19,9 +20,21 @@ const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
 	}
 	return (
 		<div className='w-full flex items-center justify-between  border-b-2 border-black-primary-100'>
-			<a className='m-4 lg:mx-16 text-black-primary-100'>QUOTED</a>
+			<Link href="/" className='m-4 lg:mx-16 text-black-primary-100'>QUOTED</Link>
 			{/* Make a tag a link so it directs back to home or top of page */}
-			<div>
+			<div className='w-fit'>
+				{/* <Link
+					href='/'
+					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
+				>
+					Home
+				</Link> */}
+				{/* <Link
+					href='/profile'
+					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
+				>
+					Profile
+				</Link> */}
 				<button
 					onClick={() => setToggleLogin(true)}
 					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
@@ -34,6 +47,7 @@ const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
 				>
 					Log Out
 				</button>
+				{/* <img src={user.photoURL} alt="" srcSet="" /> */}
 			</div>
 			{toggleLogin && (
 				<div className='fixed top-0   h-screen w-screen flex items-center justify-center border-b-2  bg-opacity-70 backdrop-filter backdrop-blur-sm  py-2 text-lg'>
