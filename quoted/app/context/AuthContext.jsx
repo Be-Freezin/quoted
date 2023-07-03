@@ -8,7 +8,7 @@ import {
 } from 'firebase/auth'
 import {
 	collection,
-	getDocs,
+	getDoc,
 	setDocs,
 	doc,
 	addDoc,
@@ -35,6 +35,7 @@ export const AuthContextProvider = ({ children }) => {
 		title: '',
 		body: '',
 		author: '',
+		authorUid: '',
 		date: '',
 	})
 
@@ -85,8 +86,9 @@ export const AuthContextProvider = ({ children }) => {
 				body: newPost.body,
 				author: newPost.author,
 				date: newPost.date,
+				authorUid: newPost.authorUid
 			})
-			setNewPost({ title: '', body: '', author: '', date: '' })
+			setNewPost({ title: '', body: '', author: '', date: '', authorUid:'' })
 		}
 	}
 
@@ -106,7 +108,28 @@ export const AuthContextProvider = ({ children }) => {
 		})
 	}, [])
 
-	const deleteItem = async (id) => [await deleteDoc(doc(db, 'articles', id))]
+	// const deleteItem = async (id) => [await deleteDoc(doc(db, 'articles', id))]
+
+	 const deleteItem = async (postId) => {
+			try {
+				const postDocRef = doc(db, 'articles', postId)
+				const postDoc = await getDoc(postDocRef)
+
+				if (postDoc.exists()) {
+					const post = postDoc.data()
+					if (post.author === auth.currentUser.displayName) {
+						await deleteDoc(postDocRef)
+						console.log('Blog post deleted successfully')
+					} else {
+						console.log('You do not have permission to delete this blog post')
+					}
+				} else {
+					console.log('Blog post does not exist')
+				}
+			} catch (error) {
+				console.error('Error deleting blog post:', error)
+			}
+		}
 
 	// Create user function
 

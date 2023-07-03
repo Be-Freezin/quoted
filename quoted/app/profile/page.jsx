@@ -2,9 +2,10 @@
 import React, {useState} from 'react'
 import { UserAuth } from '../context/AuthContext'
 import { getAuth, updateProfile } from 'firebase/auth'
+import Nav from '../components/Nav'
 
 import { useRouter } from 'next/navigation'
-const auth = getAuth()
+// const auth = getAuth()
 const Profile = () => {
 
 const { user, logout, currentUser, displayName, setDisplayName, handleUpdateProfile } = UserAuth()
@@ -23,7 +24,8 @@ const handleLogout = async () => {
 
 	
 	return (
-		<div className='p-4 flex flex-col w-5/6'>
+		<div className=' flex flex-col w-full'>
+			<Nav />
 			<h1 className='text-2xl font-bold'>Profile</h1>
 
 			<p>Welcome, {user.displayName}</p>
