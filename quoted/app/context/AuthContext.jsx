@@ -37,7 +37,7 @@ export const AuthContextProvider = ({ children }) => {
 	const [displayName, setDisplayName] = useState('')
 	
 	const [photoURL, setPhotoURL] = useState('')
-	// https://pngtree.com/free-png-vectors/default-avatar
+	
 	const [photoFile, setPhotoFile] = useState(null)
 
 	const [users, setUsers] = useState([])
@@ -205,25 +205,57 @@ export const AuthContextProvider = ({ children }) => {
 
 	// Create user function
 
-	const createUser = async (email, password, displayName) => {
-		return createUserWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				const user = userCredential.user
-				const userData = {
-					name: displayName,
-					email: email,
-					photoURL: photoURL,
-					uid: user.uid, 
-				}
 
-				// Store user information in Firestore
-				const userRef = doc(db, 'users', user.uid)
-				return setDoc(userRef, userData)
-			})
-			.catch((error) => {
-				console.log(error)
-			})
+const createUser = async (email, password, displayName) => {
+	try {
+		// Create a new user with email and password
+		const userCredential = await createUserWithEmailAndPassword(
+			auth,
+			email,
+			password
+		)
+		const user = userCredential.user
+
+		// Update the user's display name
+		await updateProfile(user, { displayName })
+
+		const userData = {
+			name: displayName,
+			email: email,
+			photoURL: user.photoURL,
+			uid: user.uid,
+		}
+
+		// Store user information in Firestore
+		const userRef = doc(db, 'users', user.uid)
+		await setDoc(userRef, userData)
+
+		// Rest of the code...
+	} catch (error) {
+		console.log(error)
 	}
+}
+
+
+	// const createUser = async (email, password, displayName) => {
+	// 	return createUserWithEmailAndPassword(auth, email, password)
+	// 		.then((userCredential) => {
+	// 			const user = userCredential.user
+	// 			const userData = {
+	// 				name: displayName,
+	// 				email: email,
+	// 				photoURL: photoURL,
+	// 				uid: user.uid, 
+	// 			}
+
+	// 			// Store user information in Firestore
+	// 			const userRef = doc(db, 'users', user.uid)
+	// 			return setDoc(userRef, userData)
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log(error)
+	// 		})
+	// }
 
 
 

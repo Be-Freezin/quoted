@@ -9,7 +9,7 @@ import Link from 'next/link'
 
 
 export default function Home() {
-	const [toggleLogin, setToggleLogin] = useState(false)
+	
 
 	// Array of objects for our posts
 	const [post, setPost] = useState([
@@ -20,19 +20,12 @@ export default function Home() {
 			date: '2023',
 		},
 	])
-	// state for our inputs to catch the new post and we will push it into our array of posts
-	// const [newPost, setNewPost] = useState({
-	// 	title: '',
-	// 	post: '',
-	// 	author: '',
-	// 	date: '',
-	// })
+
 	return (
 		<main className='min-h-screen bg-white-primary-100'>
 			<Nav
 				signIn={<SignIn />}
-				toggleLogin={toggleLogin}
-				setToggleLogin={setToggleLogin}
+				
 			/>
 			<Header />
 			<Feed post={post} />
