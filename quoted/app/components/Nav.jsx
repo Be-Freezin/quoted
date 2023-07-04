@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
-	const { user, logout } = UserAuth()
+	const { user, logout, defaultPhotoURL, photoURL, setPhotoURL } = UserAuth()
 	const router = useRouter()
 
 	const handleLogout = async () => {
@@ -19,7 +19,7 @@ const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
 		}
 	}
 	return (
-		<div className='w-full flex items-center justify-between  border-b-2 border-black-primary-100'>
+		<nav className='w-full flex items-center justify-between  border-b-2 border-black-primary-100 bg-white-primary-100'>
 			<Link href="/" className='m-4 lg:mx-16 text-black-primary-100'>QUOTED</Link>
 			{/* Make a tag a link so it directs back to home or top of page */}
 			<div className='w-fit'>
@@ -29,12 +29,12 @@ const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
 				>
 					Home
 				</Link> */}
-				{/* <Link
+				<Link
 					href='/profile'
 					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
 				>
 					Profile
-				</Link> */}
+				</Link>
 				<button
 					onClick={() => setToggleLogin(true)}
 					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
@@ -62,7 +62,7 @@ const Nav = ({ signIn, toggleLogin, setToggleLogin }) => {
 					</div>
 				</div>
 			)}
-		</div>
+		</nav>
 	)
 }
 //! Button will guide user to sign up and enable them to make posts

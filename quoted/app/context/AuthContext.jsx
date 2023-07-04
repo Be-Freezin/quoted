@@ -9,25 +9,36 @@ import {
 import {
 	collection,
 	getDoc,
-	setDocs,
+	setDoc,
 	doc,
 	addDoc,
 	query,
 	onSnapshot,
+	snapshot,
 	deleteDoc,
 } from 'firebase/firestore'
-import { auth, db } from '../firebase/config'
+import defaultPhoto from '../../public/defaultphoto.webp'
+
+import { auth, db, storage, upload } from '../firebase/config'
+
+import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage'
 const UserContext = createContext()
-const currentUser = auth.currentUser
 
 export const AuthContextProvider = ({ children }) => {
-	const [user, setUser] = useState({})
+	const currentUser = auth.currentUser
+	
+	const [user, setUser] = useState(null)
 	const [newUser, setNewUser] = useState({
 		name: '',
 		email: '',
-		imgUrl: '',
+		photoURL: '',
+		uid: '',
 	})
 	const [displayName, setDisplayName] = useState('')
+	
+	const [photoURL, setPhotoURL] = useState('')
+	// https://pngtree.com/free-png-vectors/default-avatar
+	const [photoFile, setPhotoFile] = useState(null)
 
 	const [users, setUsers] = useState([])
 	const [posts, setPosts] = useState([])
@@ -37,61 +48,102 @@ export const AuthContextProvider = ({ children }) => {
 		author: '',
 		authorUid: '',
 		date: '',
+		authorPhotoURL: '',
 	})
 
-	const handleUpdateProfile = async () => {
 
-		 if (displayName.length === 0) {
-				console.log('Display name cannot be empty')
-				return
-			}
+
+	const handleUpdateProfile = async () => {
+		if (displayName.length === 0) {
+			console.log('Display name cannot be empty')
+			return
+		}
 
 		try {
 			await updateProfile(auth.currentUser, {
 				displayName: displayName,
-				photoURL: 'https://example.com/jane-q-user/profile.jpg',
 			})
+
 			console.log('Profile updated successfully')
 		} catch (error) {
 			console.error('Error updating profile:', error)
 		}
-		
 	}
 
-	// useEffect(() => {
-	// 	const getUsers = async () => {
-	// 		const querySnapshot = await getDocs(collection(db, 'users'))
+	const handlePhotoUpload = (e) => {
+		if (photoFile == null) {
+			const defaultPhotoURL = { defaultPhoto }
+			updateProfile(auth.currentUser, {
+				photoURL: defaultPhotoURL,
+			})
+				.then(() => {
+					setPhotoURL(defaultPhotoURL)
+					alert('Default image set')
+				})
+				.catch((error) => {
+					console.error('Error setting default image:', error)
+				})
+		} else {
+		}
+		const imageRef = ref(storage, `profile_photos/${auth.currentUser.uid}`)
+		uploadBytes(imageRef, photoFile)
+			.then(() => getDownloadURL(imageRef))
+			.then((downloadURL) => {
+				updateProfile(auth.currentUser, {
+					photoURL: downloadURL,
+				})
+			})
+			.then(() => {
+				alert('image uploaded')
+			})
 
-	// 		setUsers(
-	// 			querySnapshot.docs.map((doc) => {
-	// 				return {
-	// 					id: doc.id,
-	// 					data: {
-	// 						...doc.data(),
-	// 					},
-	// 				}
-	// 			})
-	// 		)
-	// 	}
-	// 	getUsers()
-	// }, [])
+		console.log(photoURL)
+	}
+	const handleFileChange = (e) => {
+		setPhotoFile(e.target.files[0])
+	}
+
+	
+
+	useEffect(() => {
+		if (auth.currentUser?.photoURL) {
+			setPhotoURL(auth.currentUser.photoURL)
+		}
+	}, [])
 
 	// Add new post function
-
+	// ! THE AUTHOR PHOTO ISNT BEING SET PROPERLY HERE
 	const addPost = async (e) => {
 		e.preventDefault()
 		if (newPost.title !== '' && newPost.body !== '') {
+			const { displayName, uid, photoURL } = user
+			console.log('User:', displayName, uid, photoURL)
+
 			await addDoc(collection(db, 'articles'), {
 				title: newPost.title,
 				body: newPost.body,
 				author: newPost.author,
 				date: newPost.date,
-				authorUid: newPost.authorUid
+				authorUid: user.uid,
+				authorPhotoURL: user.photoURL,
 			})
-			setNewPost({ title: '', body: '', author: '', date: '', authorUid:'' })
+			setNewPost({
+				title: '',
+				body: '',
+				author: '',
+				date: '',
+				authorUid: '',
+				authorPhotoURL: '',
+			})
 		}
 	}
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+	useEffect(() => {
+		if (auth.currentUser?.photoURL) {
+			setPhotoURL(auth.currentUser.photoURL)
+		}
+	}, [])
 	// Display Posts from db
 
 	useEffect(() => {
@@ -100,8 +152,28 @@ export const AuthContextProvider = ({ children }) => {
 			let postsArr = []
 
 			QuerySnapshot.forEach((doc) => {
-				postsArr.push({ ...doc.data(), id: doc.id })
+				const post = doc.data()
+				const { name, uid, authorPhotoURL } = post
+// 
+				const updatedPost = {
+					...post,
+					id: doc.id,
+					authorName: name,
+					authorUid: uid,
+					authorPhotoURL: authorPhotoURL,
+				}
+				console.log('Updated Post:', updatedPost)
+				
+// 
+				postsArr.push({
+					...post,
+					id: doc.id,
+					authorName: name,
+					authorUid: uid,
+					authorPhotoURL: authorPhotoURL,
+				})
 			})
+			postsArr.sort((a, b) => new Date(b.date) - new Date(a.date))
 			setPosts(postsArr)
 
 			return () => unsubscribe()
@@ -110,46 +182,50 @@ export const AuthContextProvider = ({ children }) => {
 
 	// const deleteItem = async (id) => [await deleteDoc(doc(db, 'articles', id))]
 
-	 const deleteItem = async (postId) => {
-			try {
-				const postDocRef = doc(db, 'articles', postId)
-				const postDoc = await getDoc(postDocRef)
+	const deleteItem = async (postId) => {
+		try {
+			const postDocRef = doc(db, 'articles', postId)
+			const postDoc = await getDoc(postDocRef)
 
-				if (postDoc.exists()) {
-					const post = postDoc.data()
-					if (post.author === auth.currentUser.displayName) {
-						await deleteDoc(postDocRef)
-						console.log('Blog post deleted successfully')
-					} else {
-						console.log('You do not have permission to delete this blog post')
-					}
+			if (postDoc.exists()) {
+				const post = postDoc.data()
+				if (post.author === auth.currentUser.displayName) {
+					await deleteDoc(postDocRef)
+					console.log('Blog post deleted successfully')
 				} else {
-					console.log('Blog post does not exist')
+					console.log('You do not have permission to delete this blog post')
 				}
-			} catch (error) {
-				console.error('Error deleting blog post:', error)
+			} else {
+				console.log('Blog post does not exist')
 			}
+		} catch (error) {
+			console.error('Error deleting blog post:', error)
 		}
+	}
 
 	// Create user function
 
-	const createUser = (email, password) => {
+	const createUser = async (email, password, displayName) => {
 		return createUserWithEmailAndPassword(auth, email, password)
+			.then((userCredential) => {
+				const user = userCredential.user
+				const userData = {
+					name: displayName,
+					email: email,
+					photoURL: photoURL,
+					uid: user.uid, 
+				}
+
+				// Store user information in Firestore
+				const userRef = doc(db, 'users', user.uid)
+				return setDoc(userRef, userData)
+			})
+			.catch((error) => {
+				console.log(error)
+			})
 	}
 
-	// const createUser = async (e,email, password) => {
-	// 	e.preventDefault()
-	// 	if(newUser.name !== '' && newUser.email!==''){
 
-	// 		await addDoc(collection(db, 'users'),{
-	// 			name:newUser.name,
-	// 			email:newUser.email,
-	// 			imgUrl:newUser.imgUrl,
-	// 		})
-	// 		setNewUser({name: '', email: '', imgUrl:''})
-	// 	}
-	// 	createUserWithEmailAndPassword(auth, email, password)
-	// }
 
 	// Sign in function
 
@@ -158,6 +234,23 @@ export const AuthContextProvider = ({ children }) => {
 	}
 
 	// Logout function
+
+	// const logout = async () => {
+	// 	try {
+	// 		const defaultPhotoURL = { defaultPhoto }
+	// 		// Remove the user's profile photo URL
+	// 		await updateProfile(auth.currentUser, {
+	// 			photoURL: defaultPhotoURL,
+	// 		})
+
+	// 		setPhotoURL(defaultPhotoURL)
+
+	// 		return signOut(auth)
+	// 		console.log('Logged out')
+	// 	} catch (error) {
+	// 		console.log(error.message)
+	// 	}
+	// }
 
 	const logout = () => {
 		return signOut(auth)
@@ -193,7 +286,15 @@ export const AuthContextProvider = ({ children }) => {
 				deleteItem,
 				handleUpdateProfile,
 				setDisplayName,
-				displayName
+				displayName,
+				photoURL,
+				photoFile,
+				setPhotoFile,
+				setPhotoURL,
+				handlePhotoUpload,
+				upload,
+				handleFileChange,
+				defaultPhoto,
 			}}
 		>
 			{children}
