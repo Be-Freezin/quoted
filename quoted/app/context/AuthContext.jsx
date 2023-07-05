@@ -18,15 +18,17 @@ import {
 	deleteDoc,
 } from 'firebase/firestore'
 import defaultPhoto from '../../public/defaultphoto.webp'
+import { useRouter } from 'next/navigation'
 
 import { auth, db, storage, upload } from '../firebase/config'
 
-import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 const UserContext = createContext()
 
 export const AuthContextProvider = ({ children }) => {
+	const router = useRouter()
 	const currentUser = auth.currentUser
-	
+
 	const [user, setUser] = useState(null)
 	const [newUser, setNewUser] = useState({
 		name: '',
@@ -35,9 +37,9 @@ export const AuthContextProvider = ({ children }) => {
 		uid: '',
 	})
 	const [displayName, setDisplayName] = useState('')
-	
+
 	const [photoURL, setPhotoURL] = useState('')
-	
+
 	const [photoFile, setPhotoFile] = useState(null)
 
 	const [users, setUsers] = useState([])
@@ -49,9 +51,9 @@ export const AuthContextProvider = ({ children }) => {
 		authorUid: '',
 		date: '',
 		authorPhotoURL: '',
+		likes: 0,
+		likesBy: [],
 	})
-
-
 
 	const handleUpdateProfile = async () => {
 		if (displayName.length === 0) {
@@ -103,8 +105,6 @@ export const AuthContextProvider = ({ children }) => {
 		setPhotoFile(e.target.files[0])
 	}
 
-	
-
 	useEffect(() => {
 		if (auth.currentUser?.photoURL) {
 			setPhotoURL(auth.currentUser.photoURL)
@@ -112,7 +112,7 @@ export const AuthContextProvider = ({ children }) => {
 	}, [])
 
 	// Add new post function
-	// ! THE AUTHOR PHOTO ISNT BEING SET PROPERLY HERE
+
 	const addPost = async (e) => {
 		e.preventDefault()
 		if (newPost.title !== '' && newPost.body !== '') {
@@ -124,20 +124,25 @@ export const AuthContextProvider = ({ children }) => {
 				body: newPost.body,
 				author: newPost.author,
 				date: newPost.date,
+				likes: newPost.likes,
 				authorUid: user.uid,
 				authorPhotoURL: user.photoURL,
+				likesBy: [],
 			})
 			setNewPost({
 				title: '',
 				body: '',
 				author: '',
 				date: '',
+				likes: '',
 				authorUid: '',
 				authorPhotoURL: '',
+				likesBy: [],
 			})
+
+			router.push('/')
 		}
 	}
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	useEffect(() => {
 		if (auth.currentUser?.photoURL) {
@@ -154,7 +159,7 @@ export const AuthContextProvider = ({ children }) => {
 			QuerySnapshot.forEach((doc) => {
 				const post = doc.data()
 				const { name, uid, authorPhotoURL } = post
-// 
+				//
 				const updatedPost = {
 					...post,
 					id: doc.id,
@@ -163,8 +168,8 @@ export const AuthContextProvider = ({ children }) => {
 					authorPhotoURL: authorPhotoURL,
 				}
 				console.log('Updated Post:', updatedPost)
-				
-// 
+
+				//
 				postsArr.push({
 					...post,
 					id: doc.id,
@@ -179,8 +184,6 @@ export const AuthContextProvider = ({ children }) => {
 			return () => unsubscribe()
 		})
 	}, [])
-
-	// const deleteItem = async (id) => [await deleteDoc(doc(db, 'articles', id))]
 
 	const deleteItem = async (postId) => {
 		try {
@@ -205,84 +208,36 @@ export const AuthContextProvider = ({ children }) => {
 
 	// Create user function
 
+	const createUser = async (email, password, displayName) => {
+		try {
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				email,
+				password
+			)
+			const user = userCredential.user
 
-const createUser = async (email, password, displayName) => {
-	try {
-		// Create a new user with email and password
-		const userCredential = await createUserWithEmailAndPassword(
-			auth,
-			email,
-			password
-		)
-		const user = userCredential.user
+			await updateProfile(user, { displayName })
 
-		// Update the user's display name
-		await updateProfile(user, { displayName })
+			const userData = {
+				name: displayName,
+				email: email,
+				photoURL: user.photoURL,
+				uid: user.uid,
+			}
 
-		const userData = {
-			name: displayName,
-			email: email,
-			photoURL: user.photoURL,
-			uid: user.uid,
+			const userRef = doc(db, 'users', user.uid)
+			await setDoc(userRef, userData)
+		} catch (error) {
+			console.log(error)
 		}
-
-		// Store user information in Firestore
-		const userRef = doc(db, 'users', user.uid)
-		await setDoc(userRef, userData)
-
-		// Rest of the code...
-	} catch (error) {
-		console.log(error)
 	}
-}
-
-
-	// const createUser = async (email, password, displayName) => {
-	// 	return createUserWithEmailAndPassword(auth, email, password)
-	// 		.then((userCredential) => {
-	// 			const user = userCredential.user
-	// 			const userData = {
-	// 				name: displayName,
-	// 				email: email,
-	// 				photoURL: photoURL,
-	// 				uid: user.uid, 
-	// 			}
-
-	// 			// Store user information in Firestore
-	// 			const userRef = doc(db, 'users', user.uid)
-	// 			return setDoc(userRef, userData)
-	// 		})
-	// 		.catch((error) => {
-	// 			console.log(error)
-	// 		})
-	// }
-
-
 
 	// Sign in function
 
 	const signIn = (email, password) => {
 		return signInWithEmailAndPassword(auth, email, password)
 	}
-
-	// Logout function
-
-	// const logout = async () => {
-	// 	try {
-	// 		const defaultPhotoURL = { defaultPhoto }
-	// 		// Remove the user's profile photo URL
-	// 		await updateProfile(auth.currentUser, {
-	// 			photoURL: defaultPhotoURL,
-	// 		})
-
-	// 		setPhotoURL(defaultPhotoURL)
-
-	// 		return signOut(auth)
-	// 		console.log('Logged out')
-	// 	} catch (error) {
-	// 		console.log(error.message)
-	// 	}
-	// }
 
 	const logout = () => {
 		return signOut(auth)

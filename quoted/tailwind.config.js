@@ -35,14 +35,42 @@ module.exports = {
 				'yellow-primary-100': '#EECC44',
 				'yellow-primary-80': '#E3C341',
 				'yellow-primary-70': '#D8B93C',
-				
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-conic':
 					'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
 			},
+			keyframes: {
+				rainbow: {
+					'0%': {
+						borderColor: '#f00',
+					},
+					'16.66%': {
+						borderColor: '#ff0',
+					},
+					'33.33%': {
+						borderColor: '#0f0',
+					},
+					'50%': {
+						borderColor: '#0ff',
+					},
+					'66.66%': {
+						borderColor: '#00f',
+					},
+					'83.33%': {
+						borderColor: '#f0f',
+					},
+					'100%': {
+						borderColor: '#f00',
+					},
+				},
+			},
+			animation: {
+				rainbow: 'rainbow 3s linear infinite',
+			},
 		},
 	},
+
 	plugins: [],
 }

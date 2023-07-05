@@ -1,8 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { UserAuth } from '../context/AuthContext'
-import { useAuth, upload } from '../firebase/config'
-import { getAuth, updateProfile } from 'firebase/auth'
+
 import Nav from '../components/Nav'
 import Image from 'next/image'
 
@@ -23,17 +22,11 @@ const Profile = () => {
 		handleFileChange,
 		defaultPhoto
 	} = UserAuth()
-	const router = useRouter()
+	
+	const userPhotoURL = user?.photoURL || defaultPhoto
+	const userName = user?.displayName || ''
 
-	// const handleLogout = async () => {
-	// 	try {
-	// 		await logout()
-	// 		router.push('/')
-	// 		console.log('logged out')
-	// 	} catch (e) {
-	// 		console.log(e.message)
-	// 	}
-	// }
+
 
 	return (
 		<div className=' flex flex-col w-full min-h-screen justify-center items-center bg-yellow-primary-100'>
@@ -41,18 +34,24 @@ const Profile = () => {
 
 			<div className='flex flex-col justify-around items-center my-auto h-full '>
 				<Image
-					src={user.photoURL || defaultPhoto}
+					src={userPhotoURL}
 					alt='Picture of the author'
 					width={200}
 					height={200}
 					className='rounded-full mb-8'
 				/>
-
-				<p className='font-bold text-5xl text-center mb-16 '>
-					Welcome, {user.displayName}
-				</p>
-				<p>Here you can update your basic profile information.</p>
-				<form onSubmit={handleUpdateProfile} className='h-full flex flex-col justify-between'>
+				<div className='text-center mb-16'>
+					<p className='font-bold text-5xl text-center mb-5 '>
+						Welcome, {userName}
+					</p>
+					<p className=''>
+						Here you can update your basic profile information.
+					</p>
+				</div>
+				<form
+					onSubmit={handleUpdateProfile}
+					className='h-full flex flex-col justify-between'
+				>
 					<div className='flex flex-col justify-evenly h-full'>
 						<label
 							htmlFor='text'
@@ -69,8 +68,8 @@ const Profile = () => {
 						</label>
 						<button
 							type='submit'
-							// disabled={displayName.length === 0}
-							className='px-4 py-2 mx-auto m-4 w-full lg:mx-16 rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
+							
+							className='px-4 py-2 mx-auto m-4 w-full  rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
 						>
 							Update Username:
 						</button>
@@ -90,18 +89,13 @@ const Profile = () => {
 					</label>
 					<button
 						onClick={handlePhotoUpload}
-						className='px-4 py-2 mx-auto m-4 w-full lg:mx-16 rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
+						className='px-4 py-2 mx-auto m-4 w-full  rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
 					>
 						Upload
 					</button>
 				</div>
 
-				{/* <button
-					onClick={handleLogout}
-					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
-				>
-					Logout
-				</button> */}
+		
 			</div>
 		</div>
 	)

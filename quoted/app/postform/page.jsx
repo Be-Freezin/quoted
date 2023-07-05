@@ -1,29 +1,23 @@
 'use client'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { UserAuth } from '../context/AuthContext'
 import Nav from '../components/Nav'
 
-// import addData from '../firebase/firestore/addData'
-
 const page = () => {
+	const { addPost, setNewPost, newPost, user } = UserAuth()
 
-
-  const { addPost, setNewPost, newPost, user } = UserAuth()
-
-  const router = useRouter()
-
-	
+	const router = useRouter()
 
 	useEffect(() => {
 		if (user && user.displayName) {
 			setNewPost({ ...newPost, author: user.displayName })
 		}
 	}, [user, setNewPost])
-  return (
+	return (
 		<>
 			<Nav />
-			<div className='min-h-screen flex flex-col justify-evenly items-center  mx-auto'>
+			<div className='min-h-screen flex flex-col justify-evenly items-center bg-white-primary-100  mx-auto'>
 				<h1 className='text-2xl font-bold'>Post a quote!</h1>
 				<form onSubmit={addPost}>
 					<div className='flex flex-col justify-evenly items-center w-full h-5/6 mx-auto'>
@@ -91,7 +85,7 @@ const page = () => {
 						</label>
 						<button
 							type='submit'
-							className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70'
+							className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70  transition-all duration-200 focus:outline-none transform active:scale-95'
 						>
 							Submit
 						</button>

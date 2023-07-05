@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState, useContext } from 'react'
-// import { signIn, signUp } from '../firebase/auth/auth'
+
 import { useRouter } from 'next/navigation'
-// import { signOut } from 'firebase/auth'
-// import { AuthContext } from '../context/AuthContext'
+
 import Link from 'next/link'
 import { UserAuth } from '../context/AuthContext'
 
@@ -17,8 +16,7 @@ const SignIn = () => {
 	const [error, setError] = useState('')
 	const router = useRouter()
 
-	// const [logInEmail, setLogInEmail] = useState('')
-	// const [logInPassword, setLogInPassword] = useState('')
+
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
