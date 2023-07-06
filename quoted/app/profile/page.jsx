@@ -10,23 +10,18 @@ import { useRouter } from 'next/navigation'
 const Profile = () => {
 	const {
 		user,
-		logout,
-		currentUser,
+
 		displayName,
 		setDisplayName,
 		handleUpdateProfile,
-		photoURL,
-		setPhotoURL,
+
 		handlePhotoUpload,
-		upload,
 		handleFileChange,
-		defaultPhoto
+		defaultPhoto,
 	} = UserAuth()
-	
+
 	const userPhotoURL = user?.photoURL || defaultPhoto
 	const userName = user?.displayName || ''
-
-
 
 	return (
 		<div className=' flex flex-col w-full min-h-screen justify-center items-center bg-yellow-primary-100'>
@@ -68,7 +63,6 @@ const Profile = () => {
 						</label>
 						<button
 							type='submit'
-							
 							className='px-4 py-2 mx-auto m-4 w-full  rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
 						>
 							Update Username:
@@ -94,8 +88,6 @@ const Profile = () => {
 						Upload
 					</button>
 				</div>
-
-		
 			</div>
 		</div>
 	)

@@ -55,63 +55,7 @@ export const AuthContextProvider = ({ children }) => {
 		likesBy: [],
 	})
 
-	const handleUpdateProfile = async () => {
-		if (displayName.length === 0) {
-			console.log('Display name cannot be empty')
-			return
-		}
-
-		try {
-			await updateProfile(auth.currentUser, {
-				displayName: displayName,
-			})
-
-			console.log('Profile updated successfully')
-		} catch (error) {
-			console.error('Error updating profile:', error)
-		}
-	}
-
-	const handlePhotoUpload = (e) => {
-		if (photoFile == null) {
-			const defaultPhotoURL = { defaultPhoto }
-			updateProfile(auth.currentUser, {
-				photoURL: defaultPhotoURL,
-			})
-				.then(() => {
-					setPhotoURL(defaultPhotoURL)
-					alert('Default image set')
-				})
-				.catch((error) => {
-					console.error('Error setting default image:', error)
-				})
-		} else {
-		}
-		const imageRef = ref(storage, `profile_photos/${auth.currentUser.uid}`)
-		uploadBytes(imageRef, photoFile)
-			.then(() => getDownloadURL(imageRef))
-			.then((downloadURL) => {
-				updateProfile(auth.currentUser, {
-					photoURL: downloadURL,
-				})
-			})
-			.then(() => {
-				alert('image uploaded')
-			})
-
-		console.log(photoURL)
-	}
-	const handleFileChange = (e) => {
-		setPhotoFile(e.target.files[0])
-	}
-
-	useEffect(() => {
-		if (auth.currentUser?.photoURL) {
-			setPhotoURL(auth.currentUser.photoURL)
-		}
-	}, [])
-
-	// Add new post function
+	//* STORAGE/POST FUNCTIONS
 
 	const addPost = async (e) => {
 		e.preventDefault()
@@ -149,6 +93,7 @@ export const AuthContextProvider = ({ children }) => {
 			setPhotoURL(auth.currentUser.photoURL)
 		}
 	}, [])
+
 	// Display Posts from db
 
 	useEffect(() => {
@@ -159,7 +104,7 @@ export const AuthContextProvider = ({ children }) => {
 			QuerySnapshot.forEach((doc) => {
 				const post = doc.data()
 				const { name, uid, authorPhotoURL } = post
-				//
+
 				const updatedPost = {
 					...post,
 					id: doc.id,
@@ -169,7 +114,6 @@ export const AuthContextProvider = ({ children }) => {
 				}
 				console.log('Updated Post:', updatedPost)
 
-				//
 				postsArr.push({
 					...post,
 					id: doc.id,
@@ -206,7 +150,40 @@ export const AuthContextProvider = ({ children }) => {
 		}
 	}
 
-	// Create user function
+	const handlePhotoUpload = async (e) => {
+		try {
+			if (photoFile == null) {
+				const defaultPhotoURL = { defaultPhoto }
+				await updateProfile(auth.currentUser, {
+					photoURL: defaultPhotoURL,
+				})
+				setPhotoURL(defaultPhotoURL)
+				alert('Default image set')
+			} else {
+				const imageRef = ref(storage, `profile_photos/${auth.currentUser.uid}`)
+				await uploadBytes(imageRef, photoFile)
+				const downloadURL = await getDownloadURL(imageRef)
+				await updateProfile(auth.currentUser, {
+					photoURL: downloadURL,
+				})
+				alert('Image uploaded')
+			}
+		} catch (error) {
+			console.error('Error handling photo upload:', error)
+		}
+	}
+
+	const handleFileChange = (e) => {
+		setPhotoFile(e.target.files[0])
+	}
+
+	useEffect(() => {
+		if (auth.currentUser?.photoURL) {
+			setPhotoURL(auth.currentUser.photoURL)
+		}
+	}, [])
+
+	//* ACCOUNT FUNCTIONS
 
 	const createUser = async (email, password, displayName) => {
 		try {
@@ -232,9 +209,6 @@ export const AuthContextProvider = ({ children }) => {
 			console.log(error)
 		}
 	}
-
-	// Sign in function
-
 	const signIn = (email, password) => {
 		return signInWithEmailAndPassword(auth, email, password)
 	}
@@ -243,7 +217,24 @@ export const AuthContextProvider = ({ children }) => {
 		return signOut(auth)
 	}
 
-	// Watch for authentication function
+	const handleUpdateProfile = async () => {
+		if (displayName.length === 0) {
+			console.log('Display name cannot be empty')
+			return
+		}
+
+		try {
+			await updateProfile(auth.currentUser, {
+				displayName: displayName,
+			})
+
+			console.log('Profile updated successfully')
+		} catch (error) {
+			console.error('Error updating profile:', error)
+		}
+	}
+
+	//* Watch for authentication function
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -282,6 +273,7 @@ export const AuthContextProvider = ({ children }) => {
 				upload,
 				handleFileChange,
 				defaultPhoto,
+				setPosts,
 			}}
 		>
 			{children}

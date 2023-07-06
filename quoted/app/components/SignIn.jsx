@@ -54,7 +54,7 @@ const SignIn = () => {
 				/>
 				<button
 					type='submit'
-					className='px-4 py-2 mx-auto m-4 w-full lg:mx-16 rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
+					className='px-4 py-2 mx-auto m-4 w-full  rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
 				>
 					Log In
 				</button>
