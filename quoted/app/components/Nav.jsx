@@ -43,14 +43,21 @@ const Nav = ({ signIn }) => {
 					>
 						Profile
 					</Link>
-				) : null}
+				) : (
+					<button
+						onClick={() => setToggleLogin(true)}
+						className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70  transition-all duration-200 focus:outline-none transform active:scale-95'
+					>
+						Log in/Sign up
+					</button>
+				)}
 
-				<button
+				{/* <button
 					onClick={() => setToggleLogin(true)}
 					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70  transition-all duration-200 focus:outline-none transform active:scale-95'
 				>
 					Log in/Sign up
-				</button>
+				</button> */}
 				<button
 					onClick={handleLogout}
 					className='px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70  transition-all duration-200 focus:outline-none transform active:scale-95'
@@ -61,7 +68,7 @@ const Nav = ({ signIn }) => {
 			</div>
 			{toggleLogin && (
 				<div className='fixed top-0   h-screen w-screen flex items-center justify-center border-b-2  bg-opacity-70 backdrop-filter backdrop-blur-sm  py-2 text-lg'>
-					<div className='flex flex-col relative h-1/2 justify-center py-16 px-8 items-center  mx-0 my-0 bg-black-primary-80 rounded-2xl '>
+					<div className='flex flex-col relative h-1/2 justify-center py-16 px-8 items-center  mx-0 my-0 bg-black-primary-70 rounded-2xl '>
 						<button
 							onClick={() => setToggleLogin(false)}
 							className='absolute top-0 right-5 md:right-0 px-4 py-2 m-4 lg:mx-16 rounded-lg border-2 font-black border-black-primary-100 bg-red-primary-100 hover:bg-red-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-sm shadow-red-primary-70'

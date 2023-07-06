@@ -1,44 +1,78 @@
+'use client'
 import React, { useEffect, useState } from 'react'
 import { UserAuth } from '../context/AuthContext'
-import { collection, doc, getDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase/config'
-import { HiXMark } from 'react-icons/hi2'
+import { HiXMark, HiHeart, HiOutlineHeart } from 'react-icons/hi2'
 import Image from 'next/image'
 
-
 const PostCard = ({ post, id, authorPhoto }) => {
-	// const [authorData, setAuthorData] = useState(null)
+	const [likes, setLikes] = useState(0)
+	const [liked, setLiked] = useState(false)
 
-	// const [authorPhotoURL, setAuthorPhotoURL] = useState('')
-	const { user, users, posts,newPost, deleteItem, defaultPhoto, authorUid } = UserAuth()
+	const {
+		user,
+		users,
+		posts,
+		setPosts,
+		newPost,
+		deleteItem,
+		defaultPhoto,
+		authorUid,
+	} = UserAuth()
 
-	// ! WORK ON RENDERING THE PHOTO ON THE POST
-	// useEffect(() => {
-	// 	console.log(post.authorUid)
+	useEffect(() => {
+		if (user && post.likesBy.includes(user.uid)) {
+			setLiked(true)
+		} else {
+			setLiked(false)
+		}
+		setLikes(post.likesBy.length)
+	}, [user, post])
 
-	// 	const fetchAuthorData = async () => {
-	// 		if (!post || !post.authorUid) {
-	// 			return
-	// 		}
 
-	// 		const authorDocRef = doc(db, 'users', post.authorUid)
-	// 		const authorDocSnapshot = await getDoc(authorDocRef)
-	// 		if (authorDocSnapshot.exists()) {
-	// 			const authorData = authorDocSnapshot.data()
-	// 			if (authorData?.authorPhotoURL) {
-	// 				setAuthorPhotoURL(authorData.authorPhotoURL)
-	// 			}
-	// 		}
-	// 	}
+const handleLike = async () => {
+	if (!user) {
+		return
+	}
 
-	// 	fetchAuthorData()
-	// }, [post])
-	// !
-	// if (!post.authorPhotoURL) {
-	// 	// Return null or a loading state while the authorPhotoURL is being fetched
-	// 	return null
-	// }
-	console.log(newPost.authorPhotoURL)
+	const postRef = doc(db, 'articles', post.id)
+	const postDoc = await getDoc(postRef)
+	const postData = postDoc.data()
+
+	let updatedLikesBy
+
+	if (!postData.likesBy) {
+		updatedLikesBy = [user.uid]
+	} else {
+		const userLiked = postData.likesBy.includes(user.uid)
+		if (userLiked) {
+			updatedLikesBy = postData.likesBy.filter((uid) => uid !== user.uid)
+		} else {
+			updatedLikesBy = [...postData.likesBy, user.uid]
+		}
+	}
+
+	await updateDoc(postRef, { likesBy: updatedLikesBy })
+
+	const updatedPosts = posts.map((p) => {
+		if (p.id === post.id) {
+			return {
+				...p,
+				likesBy: updatedLikesBy,
+			}
+		}
+		return p
+	})
+
+	setPosts(updatedPosts)
+}
+
+
+
+
+
+	
 	return (
 		<article
 			key={post.id}
@@ -64,6 +98,16 @@ const PostCard = ({ post, id, authorPhoto }) => {
 					hour: 'numeric',
 					minute: 'numeric',
 				})}
+				<div className='flex flex-row items-center'>
+					<button onClick={handleLike} className='mr-2'>
+						{liked ? (
+							<HiHeart className='text-2xl text-red-primary-100' />
+						) : (
+							<HiOutlineHeart className='text-2xl text-red-primary-100' />
+						)}
+					</button>
+					<p className='font-semibold'>{likes}</p>
+				</div>
 				<button
 					onClick={() => deleteItem(post.id)}
 					className='bg-red-primary-100 p-1 border-2 border-black-primary-100 rounded '

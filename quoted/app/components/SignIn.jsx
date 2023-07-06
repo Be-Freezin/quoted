@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState, useContext } from 'react'
-// import { signIn, signUp } from '../firebase/auth/auth'
+
 import { useRouter } from 'next/navigation'
-// import { signOut } from 'firebase/auth'
-// import { AuthContext } from '../context/AuthContext'
+
 import Link from 'next/link'
 import { UserAuth } from '../context/AuthContext'
 
@@ -17,8 +16,7 @@ const SignIn = () => {
 	const [error, setError] = useState('')
 	const router = useRouter()
 
-	// const [logInEmail, setLogInEmail] = useState('')
-	// const [logInPassword, setLogInPassword] = useState('')
+
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
@@ -56,7 +54,7 @@ const SignIn = () => {
 				/>
 				<button
 					type='submit'
-					className='px-4 py-2 mx-auto m-4 w-full lg:mx-16 rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
+					className='px-4 py-2 mx-auto m-4 w-full  rounded-lg border-2 font-bold border-black-primary-100 bg-blue-primary-100 hover:bg-blue-primary-70 transition-all duration-200 focus:outline-none  active:scale-95 shadow-md active:shadow-lg shadow-blue-primary-70'
 				>
 					Log In
 				</button>
